@@ -5,6 +5,7 @@
 #include <string.h>
 
 #include "config.h"
+#include "debug.h"
 #include "error.h"
 #include "imageloader.h"
 #include "imagemgr.h"
@@ -226,8 +227,16 @@ static void swapColors(Image32* img, const RGBA* colorA, const RGBA* colorB) {
     uint32_t* end = it + (img->w * img->h);
     uint32_t ua, ub;
 
-    ua = *((uint32_t*) colorA);
-    ub = *((uint32_t*) colorB);
+    ASSERT(colorA != nullptr, "colorA is nullptr");
+    ASSERT(colorB != nullptr, "colorB is nullptr");
+
+    if (colorA != nullptr && colorB != nullptr) {
+        ua = *((uint32_t*) colorA);
+        ub = *((uint32_t*) colorB);
+    } else {
+        errorWarning("One of colors passed to swapColors() is nullptr.");
+        return;
+    }
 
     while (it != end) {
         if (*it == ua)
